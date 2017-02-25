@@ -94,6 +94,7 @@ Uppik.prototype.initElements = function() {
     input.type = 'file';
     input.className = this.options.fileInputClass;
     input.style = this.options.fileInputStyle;
+    input.accept = 'image/*';
 
     if (this.options.fakeFileInput) {
         this.target.style.position = 'relative';
