@@ -172,6 +172,9 @@ Uppik.prototype.hideMessage = function() {
 Uppik.prototype._onSuccess = function(image) {
     this.input.value = null;
     this.input.removeAttribute('disabled');
+    if (this.options.showState) {
+        this.hideMessage();
+    }
     this.options.onSuccess.apply(this, [image.url, image]);
 }
 
