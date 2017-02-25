@@ -7,6 +7,9 @@ var Uppik = function(target, options) {
     this.target = target;
     this.options = {
         showState: true,
+        fakeFileInput: false,
+        fileInputClass: '',
+        fileInputStyle: '',
         onSuccess: this.onSuccess,
         onUpload: this.onUpload,
         onError: this.onError
@@ -86,25 +89,28 @@ Uppik.prototype.initMessage = function() {
 }
 
 Uppik.prototype.initElements = function() {
-    this.target.style.position = 'relative';
-    this.target.style.overflow = 'hidden';
-
     // file input element
     var input = document.createElement('input');
     input.type = 'file';
-    input.style.width = '1000px';
-    input.style.height = '1000px';
-    input.style.fontSize = '1000px';
-    input.style.opacity = 0;
-    input.style.position = 'absolute';
-    input.style.left = '0px';
-    input.style.top = '0px';
-    input.style.cursor = 'pointer';
-    this.input = input;
+    input.className = this.options.fileInputClass;
+    input.style = this.options.fileInputStyle;
+
+    if (this.options.fakeFileInput) {
+        this.target.style.position = 'relative';
+        this.target.style.overflow = 'hidden';
+        input.style.width = '1000px';
+        input.style.height = '1000px';
+        input.style.fontSize = '1000px';
+        input.style.opacity = 0;
+        input.style.position = 'absolute';
+        input.style.left = '0px';
+        input.style.top = '0px';
+        input.style.cursor = 'pointer';
+    }
 
     //attack file input to body
     this.target.appendChild(input);
-
+    this.input = input;
     //bind events
     var me = this;
     input.onchange = function(e) {
