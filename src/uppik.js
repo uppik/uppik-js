@@ -12,7 +12,8 @@ var Uppik = function(target, options) {
         fileInputStyle: '',
         onSuccess: this.onSuccess,
         onUpload: this.onUpload,
-        onError: this.onError
+        onError: this.onError,
+        onInitialized: null
     };
     if (options) {
         for (key in options) {
@@ -47,7 +48,7 @@ Uppik.parseJson = function(str) {
     try {
         output = JSON.parse(str);
     } catch (ex) {
-        //nothing
+        throw 'Something wrong with uppik service.';
     }
     return output;
 }
@@ -89,32 +90,37 @@ Uppik.prototype.initMessage = function() {
 }
 
 Uppik.prototype.initElements = function() {
-    // file input element
-    var input = document.createElement('input');
-    input.type = 'file';
-    input.className = this.options.fileInputClass;
-    input.style = this.options.fileInputStyle;
-    input.accept = 'image/*';
-
-    if (this.options.fakeFileInput) {
-        this.target.style.position = 'relative';
-        this.target.style.overflow = 'hidden';
-        input.style.width = '1000px';
-        input.style.height = '1000px';
-        input.style.fontSize = '1000px';
-        input.style.opacity = 0;
-        input.style.position = 'absolute';
-        input.style.left = '0px';
-        input.style.top = '0px';
-        input.style.cursor = 'pointer';
-    }
-
-    //attack file input to body
-    this.target.appendChild(input);
-    this.input = input;
-    //bind events
     var me = this;
-    input.onchange = function(e) {
+    if (this.target.tagName.toLowerCase() == 'input' && this.target.type.toLowerCase() == 'file') {
+        this.input = this.target;
+    } else {
+        // file input element
+        var input = document.createElement('input');
+        input.type = 'file';
+        input.className = this.options.fileInputClass;
+        input.style = this.options.fileInputStyle;
+        if (this.options.fakeFileInput) {
+            this.target.style.position = 'relative';
+            this.target.style.overflow = 'hidden';
+            input.style.width = '1000px';
+            input.style.height = '1000px';
+            input.style.fontSize = '1000px';
+            input.style.opacity = 0;
+            input.style.position = 'absolute';
+            input.style.left = '0px';
+            input.style.top = '0px';
+            input.style.cursor = 'pointer';
+        }
+
+        //attack file input to body
+        this.target.appendChild(input);
+        this.input = input;
+    }
+    this.input.accept = 'image/*';
+    this.input.disabled = true;
+
+    //bind events
+    this.input.onchange = function(e) {
         e.stopPropagation();
         me.onFileSelected(e);
     }
@@ -225,6 +231,7 @@ Uppik.prototype.inquiry = function() {
                         me.endpoint = data.endpoint;
                         me.token = data.token;
                         me.quality = data.quality;
+                        me.input.removeAttribute('disabled');
                         return;
                     }
                 }
